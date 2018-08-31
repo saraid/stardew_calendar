@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+
+load 'lib/stardew_calendar.rb'
+include StardewCalendar
+
+# export_constants
+[ Action::PlayerAction::Plant,
+  Action::PlayerAction::Clear,
+  Schedule::Season::Spring,
+  Schedule::Season::Summer,
+  Schedule::Season::Fall
+].each do |klass|
+  Kernel.const_set(klass.name.split('::').last.to_sym, klass)
+end
+
+class Farm
+  def initialize(rows, cols)
+    @plots =
+      Array.new(rows).map do
+        Array.new(cols).map do
+          Plot.new
+        end
+      end
+  end
+
+  def [](row, col)
+    row -= 1
+    col -= 1
+
+    raise RangeError if row.to_i < 0 || col.to_i < 0
+    raise RangeError if row.to_i >= @plots.size || col.to_i >= @plots.first.size
+
+    @plots[row][col]
+  end
+
+  def plots
+    @plots.flatten
+  end
+
+  def on_day(day)
+    @plots.map.with_index do |p_col, row|
+      p_col.map.with_index do |plot, col|
+        plot.schedule[day].map(&:to_s).join(', ')
+      end
+    end.tap do |plot_grid|
+      singleton_class.class_eval do
+      end
+    end
+  end
+end
+
+def farm
+  @farm ||= Farm.new(3, 7)
+end
+
+farm[1, 1].instance_eval do |plot|
+  [ Plant.new(Crop::Blueberry, plot, Summer::Day01),
+  ].each(&:execute!)
+end
+
+require "irb"
+
+IRB.start
