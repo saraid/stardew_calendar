@@ -35,6 +35,10 @@ StardewCalendar.export_constants
 Season = StardewCalendar::Schedule::Season
 Day = StardewCalendar::Schedule::Day
 
+before do
+  content_type 'text/json'
+end
+
 get '/can_be_planted_today' do
   season = Season.find(params[:season])
   remaining_days = params.fetch(:remaining_days) { 28 - params[:day].to_i }.to_i
