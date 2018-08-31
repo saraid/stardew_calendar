@@ -8,7 +8,9 @@ StardewCalendar.export_constants
 load 'lib/refinements/sane_inspection.rb'
 SaneInspection.saneify_inspect_on_every_class!(StardewCalendar)
 
-load 'bin/run_plan'
+def run_plan
+  load 'bin/run_plan'
+end
 
 def reload
   @farm = nil

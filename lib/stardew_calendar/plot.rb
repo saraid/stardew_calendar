@@ -4,12 +4,12 @@ module StardewCalendar
 
     def initialize
       @schedule = Schedule.instance
-      @schedule_array = Schedule.day_array
+      @farmable_days = Schedule.farmable_days
     end
     attr_reader :schedule
 
     def print_schedule
-      tp(@schedule_array.map do |day|
+      tp(@farmable_days.map do |day|
         next if @schedule[day].empty?
         { day: day, crop: @schedule[day].map(&:to_s).join(', ') }
       end.compact)
@@ -20,8 +20,8 @@ module StardewCalendar
 
       @schedule[day] << action
 
-      current_day_index = @schedule_array.index(day)
-      @schedule_array[current_day_index..-1].each do |current_day|
+      current_day_index = @farmable_days.index(day)
+      @farmable_days[current_day_index..-1].each do |current_day|
         @schedule[current_day].reject! do |action|
           case action
           when Action::PlayerAction::Plant,
@@ -48,31 +48,26 @@ module StardewCalendar
           !crop.seasons.include?(action.to_season)
       end
 
-      current_day_index = @schedule_array.index(day)
+      day_cursor = day
       crop.days_until_first_harvest.times do |succ|
-        current_day = @schedule[@schedule_array[current_day_index + succ + 1]]
-        return if current_day.any?(&test_for_season_change)
+        day_actions = @schedule[day_cursor += 1]
+        return if day_actions.any?(&test_for_season_change)
 
-        current_day << Action::GameEvent::Grow.new(self)
+        day_actions << Action::GameEvent::Grow.new(self)
       end
 
-      current_day_index += crop.days_until_first_harvest
-      @schedule[@schedule_array[current_day_index]].
-        delete_if { |action| Action::GameEvent::Grow === action }
-      @schedule[@schedule_array[current_day_index]] <<
-        Action::PlayerAction::Harvest.new(crop, self)
+      @schedule[day_cursor].delete_if { |action| Action::GameEvent::Grow === action }
+      @schedule[day_cursor] << Action::PlayerAction::Harvest.new(crop, self)
 
       unless crop.days_until_regrowth.nil?
         loop do
           crop.days_until_regrowth.times do |succ|
-            current_day = @schedule[@schedule_array[current_day_index + succ + 1]]
-            return if current_day.any?(&test_for_season_change)
+            day_actions = @schedule[day_cursor += 1]
+            return if day_actions.any?(&test_for_season_change)
 
-            current_day << Action::GameEvent::Grow.new(self)
+            day_actions << Action::GameEvent::Grow.new(self)
           end
-          current_day_index += crop.days_until_regrowth
-          @schedule[@schedule_array[current_day_index]] <<
-            Action::PlayerAction::Harvest.new(crop, self)
+          @schedule[day_cursor] << Action::PlayerAction::Harvest.new(crop, self)
         end
       end
     end

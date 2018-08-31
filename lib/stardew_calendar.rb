@@ -10,6 +10,7 @@ module StardewCalendar
   def self.export_constants
     [ Action::PlayerAction::Plant,
       Action::PlayerAction::Clear,
+      Crop, Plot, Schedule,
       Schedule::Season::Spring,
       Schedule::Season::Summer,
       Schedule::Season::Fall,

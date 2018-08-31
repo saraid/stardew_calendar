@@ -35,7 +35,7 @@ class Farm
   end
 
   def first_empty_day(starting)
-    Schedule.day_array.find do |day|
+    Schedule.farmable_days.find do |day|
       next unless day > starting
       plots.
         map(&:schedule).
@@ -45,10 +45,10 @@ class Farm
   end
 
   def all_harvests
-    plots.map(&:schedule).map(&:values).flatten.select do |actions|
-      StardewCalendar::Action::PlayerAction::Harvest === actions
+    plots.map(&:schedule).map(&:values).flatten.select do |action|
+      StardewCalendar::Action::PlayerAction::Harvest === action
     end.
-      group_by { |action| action.crop }.
+      group_by { |harvest| harvest.crop }.
       transform_keys(&:to_s).
       transform_values(&:size)
   end

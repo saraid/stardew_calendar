@@ -1,6 +1,8 @@
 module StardewCalendar
   class Plot
     def apply_dsl!
+      StardewCalendar.export_constants
+
       singleton_class.class_eval do
         include Plot::DSL
       end

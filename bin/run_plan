@@ -1,8 +1,6 @@
 #!/usr/bin/env ruby
 
 load 'lib/stardew_calendar.rb'
-include StardewCalendar
-
 StardewCalendar.export_constants
 
 load 'lib/farm.rb'

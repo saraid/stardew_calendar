@@ -1,7 +1,7 @@
 module StardewCalendar
   class Schedule
     def self.instance
-      day_array.
+      farmable_days.
         zip(Array.new(84).map { [] }).to_h.tap do |hash|
         hash[Season::Spring::Day01] << Action::GameEvent::SeasonChange.new(:Spring)
         hash[Season::Summer::Day01] << Action::GameEvent::SeasonChange.new(:Summer)
@@ -9,7 +9,7 @@ module StardewCalendar
       end
     end
 
-    def self.day_array
+    def self.farmable_days
       Season::Spring.days + Season::Summer.days + Season::Fall.days
     end
 
@@ -43,6 +43,14 @@ module StardewCalendar
         else
           season.const_get(:"Day#{'%02d' % day.succ}")
         end
+      end
+
+      def +(num)
+        num.times.inject(self) { |memo, _| memo.succ }
+      end
+
+      def -(num)
+        num.times.inject(self) { |memo, _| memo.prev }
       end
 
       def to_s
