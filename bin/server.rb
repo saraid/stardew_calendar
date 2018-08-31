@@ -37,6 +37,7 @@ Day = StardewCalendar::Schedule::Day
 
 before do
   content_type 'text/json'
+  headers 'X-Source-Code-At' => 'https://github.com/saraid/stardew_calendar'
 end
 
 get '/can_be_planted_today' do
