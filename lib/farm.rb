@@ -1,19 +1,11 @@
+load 'lib/stardew_calendar/plot/dsl.rb'
+
 class Farm
   def initialize(rows, cols)
     @plots =
       Array.new(rows).map do
         Array.new(cols).map do
-          Plot.new.tap do |plot|
-            plot.singleton_class.class_eval do
-              def clear(day)
-                Clear.new(self, day).execute!
-              end
-
-              def plant(crop, on:)
-                Plant.new(crop, self, on).execute!
-              end
-            end
-          end
+          Plot.new.tap(&:apply_dsl!)
         end
       end
   end
@@ -55,8 +47,9 @@ class Farm
   def all_harvests
     plots.map(&:schedule).map(&:values).flatten.select do |actions|
       StardewCalendar::Action::PlayerAction::Harvest === actions
-    end.group_by { |action| action.crop }.map do |crop, actions|
-      [ crop.to_s, actions.size ]
-    end.to_h
+    end.
+      group_by { |action| action.crop }.
+      transform_keys(&:to_s).
+      transform_values(&:size)
   end
 end
