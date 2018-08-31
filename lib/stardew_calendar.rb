@@ -7,12 +7,21 @@ require_relative 'stardew_calendar/schedule'
 require_relative 'stardew_calendar/crop'
 
 module StardewCalendar
-  class Plan
-    rattr_initialize :farm
-  end
-
-  class Farm
-    rattr_initialize :plots
+  def self.export_constants
+    [ Action::PlayerAction::Plant,
+      Action::PlayerAction::Clear,
+      Schedule::Season::Spring,
+      Schedule::Season::Summer,
+      Schedule::Season::Fall,
+      Schedule::Season::Winter,
+    ].each do |klass|
+      sym = klass.name.split('::').last.to_sym
+      if Kernel.const_defined?(sym)
+        raise "Collision on #{sym}" unless Kernel.const_get(sym) == klass
+      else
+        Kernel.const_set(sym, klass)
+      end
+    end
   end
 end
 

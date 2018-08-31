@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+load 'lib/stardew_calendar.rb'
+include StardewCalendar
+
+StardewCalendar.export_constants
+
+load 'lib/farm.rb'
+load 'lib/plan.rb'
+
+def go
+  farm.first_empty_day(Summer::Day01).prev.
+    tap { |day| puts "To plan: #{day}" }.
+    tap { puts '---------------' }.
+    tap do |day|
+      puts 'Will mature in time:'
+      day.season.crops.
+        select { |crop| crop.days_until_first_harvest <= (28 - day.day) }.
+        each do |crop|
+          puts "  #{crop.to_s}"
+        end
+    end.
+    yield_self { |day| farm.on_day(day) }.
+    tap { puts '---------------' }.
+    tap { |plots| plots.each { |row| puts row.inspect } }
+
+  puts
+  puts 'Currently Harvesting:'
+  farm.all_harvests.map do |(crop, number)|
+    puts "  #{crop} - #{number * plot_size}"
+  end
+  nil
+end
+
+go if __FILE__ == $0

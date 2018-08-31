@@ -57,6 +57,8 @@ module StardewCalendar
       end
 
       current_day_index += crop.days_until_first_harvest
+      @schedule[@schedule_array[current_day_index]].
+        delete_if { |action| Action::GameEvent::Grow === action }
       @schedule[@schedule_array[current_day_index]] <<
         Action::PlayerAction::Harvest.new(crop, self)
 
