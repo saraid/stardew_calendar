@@ -3,19 +3,27 @@ class Farm
     @plots =
       Array.new(rows).map do
         Array.new(cols).map do
-          Plot.new
+          Plot.new.tap do |plot|
+            plot.singleton_class.class_eval do
+              def plant(crop, on:)
+                Plant.new(crop, self, on).execute!
+              end
+            end
+          end
         end
       end
   end
 
-  def [](row, col)
+  def [](row, col, &block)
     row -= 1
     col -= 1
 
     raise RangeError if row.to_i < 0 || col.to_i < 0
     raise RangeError if row.to_i >= @plots.size || col.to_i >= @plots.first.size
 
-    @plots[row][col]
+    @plots[row][col].tap do |plot|
+      plot.instance_exec(&block) if block_given?
+    end
   end
 
   def plots

@@ -14,7 +14,7 @@ module StardewCalendar
         end
 
         def execute!
-          plot.plant(self)
+          plot.plant_crop(self)
         end
       end
 

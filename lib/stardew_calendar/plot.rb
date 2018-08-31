@@ -34,7 +34,7 @@ module StardewCalendar
       end
     end
 
-    def plant(action)
+    def plant_crop(action)
       day, crop = action.day, action.crop
 
       raise Plot::Occupied if @schedule[day].any? do |action|
