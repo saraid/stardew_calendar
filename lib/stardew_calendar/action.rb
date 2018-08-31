@@ -30,7 +30,7 @@ module StardewCalendar
         rattr_initialize :plot, :day
 
         def execute!
-          plot.clear(self)
+          plot.clear_plot(self)
         end
       end
     end

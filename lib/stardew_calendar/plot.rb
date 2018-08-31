@@ -15,7 +15,7 @@ module StardewCalendar
       end.compact)
     end
 
-    def clear(action)
+    def clear_plot(action)
       day = action.day
 
       @schedule[day] << action

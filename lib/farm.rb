@@ -5,6 +5,10 @@ class Farm
         Array.new(cols).map do
           Plot.new.tap do |plot|
             plot.singleton_class.class_eval do
+              def clear(day)
+                Clear.new(self, day).execute!
+              end
+
               def plant(crop, on:)
                 Plant.new(crop, self, on).execute!
               end
