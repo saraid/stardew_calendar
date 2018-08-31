@@ -1,7 +1,6 @@
 require 'sinatra'
 
 load 'lib/stardew_calendar.rb'
-load 'lib/farm.rb'
 
 module StardewCalendar
   class Crop
